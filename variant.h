@@ -219,7 +219,7 @@ public:
       variant_details::indexed_visit(
           [this, &other](const auto& other_value, auto other_index) {
             if (index() == other_index) {
-              get<other_index>(*this) = std::move(other_value);
+              variant_details::get_impl<other_index>(*this) = other_value;
             } else if constexpr (std::is_nothrow_copy_constructible_v<std::decay_t<decltype(other_value)>> ||
                                  std::is_nothrow_move_constructible_v<std::decay_t<decltype(other_value)>>) {
               this->template emplace<other_index>(other_value);
@@ -243,7 +243,7 @@ public:
       variant_details::indexed_visit(
           [this](auto&& other_value, auto other_index) {
             if (index() == other_index) {
-              get<other_index>(*this) = std::move(other_value);
+              variant_details::get_impl<other_index>(*this) = std::move(other_value);
             } else {
               this->template emplace<other_index>(std::move(other_value));
             }
@@ -265,7 +265,7 @@ public:
            std::is_constructible_v<T_i, T> && variant_details::exactly_one_v<T_i, Types...>) constexpr variant&
   operator=(T&& t) noexcept(std::is_nothrow_assignable_v<T_i&, T>&& std::is_nothrow_constructible_v<T_i, T>) {
     if (holds_alternative<T_i>(*this)) {
-      get<T_i>(*this) = std::forward<T>(t);
+      variant_details::get_impl<T_i>(*this) = std::forward<T>(t);
     } else if constexpr (std::is_nothrow_constructible_v<T_i, T> || !std::is_nothrow_move_constructible_v<T_i>) {
       emplace<T_i>(std::forward<T>(t));
     } else {
