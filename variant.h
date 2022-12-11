@@ -265,7 +265,7 @@ public:
            std::is_constructible_v<T_i, T> && variant_details::exactly_one_v<T_i, Types...>) constexpr variant&
   operator=(T&& t) noexcept(std::is_nothrow_assignable_v<T_i&, T>&& std::is_nothrow_constructible_v<T_i, T>) {
     if (holds_alternative<T_i>(*this)) {
-      variant_details::get_impl<T_i>(*this) = std::forward<T>(t);
+      variant_details::get_impl<variant_details::type_index_v<T_i, Types...>>(*this) = std::forward<T>(t);
     } else if constexpr (std::is_nothrow_constructible_v<T_i, T> || !std::is_nothrow_move_constructible_v<T_i>) {
       emplace<T_i>(std::forward<T>(t));
     } else {
