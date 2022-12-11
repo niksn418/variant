@@ -19,6 +19,9 @@ template <std::size_t I>
 inline constexpr in_place_index_t<I> in_place_index{};
 
 namespace variant_details {
+template <std::size_t I>
+using index = std::integral_constant<std::size_t, I>;
+
 template <std::size_t I, typename... Types>
 using type_at_index = std::tuple_element_t<I, std::tuple<Types...>>;
 
@@ -30,7 +33,7 @@ inline constexpr std::size_t type_index_v = [] {
 
 template <typename T, template <typename...> typename Variant, typename... Types>
 constexpr auto variant_type_index(const Variant<Types...>&) noexcept {
-  return std::integral_constant<std::size_t, type_index_v<T, Types...>>{};
+  return index<type_index_v<T, Types...>>{};
 };
 
 template <typename T, typename Variant>
