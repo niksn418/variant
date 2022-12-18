@@ -221,7 +221,7 @@ public:
             if (index() == other_index) {
               variant_details::get_impl<other_index>(*this) = other_value;
             } else if constexpr (std::is_nothrow_copy_constructible_v<std::decay_t<decltype(other_value)>> ||
-                                 std::is_nothrow_move_constructible_v<std::decay_t<decltype(other_value)>>) {
+                                 !std::is_nothrow_move_constructible_v<std::decay_t<decltype(other_value)>>) {
               this->template emplace<other_index>(other_value);
             } else {
               *this = variant(other);
